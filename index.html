@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Chase-FinalProject</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Chase-ZurichTransitOptimization</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7795,17 +7795,33 @@ a.anchor-link {
 </style>
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<main><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<main>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="Public-Transit-Optimization-in-Zurich">Public Transit Optimization in Zurich<a class="anchor-link" href="#Public-Transit-Optimization-in-Zurich">¶</a></h1><p>Josiah Chase</p>
+<p><a href="https://josiahchase.github.io">Project Website</a></p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-python"><pre><span></span><span class="c1">#mounting google drive</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">drive</span>
 <span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">'/content/drive'</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 </pre></div>
 </div>
 </div>
@@ -7824,15 +7840,43 @@ a.anchor-link {
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="Project-Plan">Project Plan<a class="anchor-link" href="#Project-Plan">¶</a></h1><p>The goal of this project is to investigate the efficiency of the public transit system in Zurich, Switzerland, and possible optimization strategies. How is it performing today? Are there possible areas for improvement? Zurich has one of the best public transit systems in the world, making it a good case study for other cities to use as a model for improvements. By looking at vehicle usage, route selection, and more we can quantify the performance of the Zurich public transit system. I hypothesize that there will be a relationship between high traffic stations and where delays are common. I also predict that busses will cause more delays than other vehicle types. I am also interested to find any unintuitive delay sources, perhaps at small stops, or those outside the city center.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="Extraction,-Transform,-and-Load-(ETL)">Extraction, Transform, and Load (ETL)<a class="anchor-link" href="#Extraction,-Transform,-and-Load-(ETL)">¶</a></h1><h2 id="Project-Dataset">Project Dataset<a class="anchor-link" href="#Project-Dataset">¶</a></h2><p>The Zurich City Government has an open database, <a href="https://data.stadt-zuerich.ch/">Open Data Zurich</a>. This project will use 2 weeks of passenger data from January 2-15, 2022. The data has been translated from the original German, and reposted on <a href="https://www.kaggle.com/datasets/hanselliott/a-week-of-zurich-transit?resource=download">Kaggle</a>. The original data was collected from tap in/out data from onboard payment stations on public transit vehicles, mainly trams and busses.</p>
+<p>Data was provided on Kaggle as .csv files, which were downloaded to google drive, then read into the notebook. The data was provided as 2 separate files, one per week.  There are 544 columns, and nearly 3 million entries to the dataset. Each entry represents an individual trip from one passenger. The columns include routes/stop information, data and time, vehicle type, individual ticket info, as well as information on average daily and annual ridership for each route combination. This can be used to calculate average delays, vehicle usage, demand corellations by time of day, and many more metrics which can be used to quantify efficiecy.</p>
+<p>In the future, I'd like to scrape data from additional/more recent weeks to improve the analysis accuracy, as well as incoporate more exact timing data to calculate delays and performance more accurtely.</p>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="n">pwd</span><span class="p">()</span>
+<div class="highlight hl-python"><pre><span></span><span class="c1">#This code reads in the .csv files, and concatenates them into one dataframe.</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"/content/drive/MyDrive/IntroToDataSci/FinalProject/zurich_transit_20220102.csv"</span><span class="p">)</span>
+<span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"/content/drive/MyDrive/IntroToDataSci/FinalProject/zurich_transit_20220109.csv"</span><span class="p">)</span>
+<span class="n">zurich_2022</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">df2</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">zurich_2022</span>
 </pre></div>
 </div>
 </div>
@@ -7843,9 +7887,443 @@ a.anchor-link {
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[1]:</div>
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>'/content'</pre>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div class="colab-df-container" id="df-55bb423c-b979-4e35-959f-1566b330859c">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>unit_id</th>
+<th>line</th>
+<th>vehicle_id</th>
+<th>course_id</th>
+<th>transit_type</th>
+<th>circulation_num</th>
+<th>route_id</th>
+<th>route_desig</th>
+<th>route_type</th>
+<th>from_stopnum</th>
+<th>...</th>
+<th>from_sch_dep</th>
+<th>from_act_dep</th>
+<th>after_sch_arr</th>
+<th>after_act_arr</th>
+<th>after_sch_dep</th>
+<th>after_act_dep</th>
+<th>from_latitude</th>
+<th>from_longitude</th>
+<th>after_latitude</th>
+<th>after_longitude</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>1</td>
+<td>2</td>
+<td>3040</td>
+<td>15</td>
+<td>T</td>
+<td>262402</td>
+<td>158338</td>
+<td>BTIE - SGEI</td>
+<td>1</td>
+<td>48</td>
+<td>...</td>
+<td>44208</td>
+<td>44214</td>
+<td>44280</td>
+<td>44296</td>
+<td>44292</td>
+<td>44310</td>
+<td>47.378406</td>
+<td>8.510109</td>
+<td>47.381336</td>
+<td>8.503520</td>
+</tr>
+<tr>
+<th>1</th>
+<td>2</td>
+<td>2</td>
+<td>3002</td>
+<td>3</td>
+<td>T</td>
+<td>266003</td>
+<td>158338</td>
+<td>BTIE - SGEI</td>
+<td>1</td>
+<td>48</td>
+<td>...</td>
+<td>33858</td>
+<td>33861</td>
+<td>33930</td>
+<td>33962</td>
+<td>33942</td>
+<td>33972</td>
+<td>47.378406</td>
+<td>8.510109</td>
+<td>47.381336</td>
+<td>8.503520</td>
+</tr>
+<tr>
+<th>2</th>
+<td>3</td>
+<td>2</td>
+<td>3032</td>
+<td>3</td>
+<td>T</td>
+<td>266003</td>
+<td>158338</td>
+<td>BTIE - SGEI</td>
+<td>1</td>
+<td>48</td>
+<td>...</td>
+<td>85236</td>
+<td>85187</td>
+<td>85308</td>
+<td>85266</td>
+<td>85320</td>
+<td>85284</td>
+<td>47.378406</td>
+<td>8.510109</td>
+<td>47.381336</td>
+<td>8.503520</td>
+</tr>
+<tr>
+<th>3</th>
+<td>4</td>
+<td>2</td>
+<td>3059</td>
+<td>3</td>
+<td>T</td>
+<td>263968</td>
+<td>158338</td>
+<td>BTIE - SGEI</td>
+<td>1</td>
+<td>48</td>
+<td>...</td>
+<td>70686</td>
+<td>70655</td>
+<td>70758</td>
+<td>70724</td>
+<td>70770</td>
+<td>70734</td>
+<td>47.378406</td>
+<td>8.510109</td>
+<td>47.381336</td>
+<td>8.503520</td>
+</tr>
+<tr>
+<th>4</th>
+<td>5</td>
+<td>2</td>
+<td>2070</td>
+<td>10</td>
+<td>T</td>
+<td>264746</td>
+<td>158338</td>
+<td>BTIE - SGEI</td>
+<td>1</td>
+<td>48</td>
+<td>...</td>
+<td>72108</td>
+<td>72123</td>
+<td>72180</td>
+<td>72195</td>
+<td>72192</td>
+<td>72204</td>
+<td>47.378406</td>
+<td>8.510109</td>
+<td>47.381336</td>
+<td>8.503520</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>2836093</th>
+<td>1408584</td>
+<td>919</td>
+<td>11668</td>
+<td>1</td>
+<td>BP</td>
+<td>264057</td>
+<td>166511</td>
+<td>GAAZ - BKUE</td>
+<td>2</td>
+<td>6044</td>
+<td>...</td>
+<td>22620</td>
+<td>22836</td>
+<td>23520</td>
+<td>23393</td>
+<td>23520</td>
+<td>23623</td>
+<td>47.344406</td>
+<td>8.572938</td>
+<td>47.319129</td>
+<td>8.580245</td>
+</tr>
+<tr>
+<th>2836094</th>
+<td>1408585</td>
+<td>919</td>
+<td>11663</td>
+<td>4</td>
+<td>BP</td>
+<td>263025</td>
+<td>166511</td>
+<td>GAAZ - BKUE</td>
+<td>2</td>
+<td>6044</td>
+<td>...</td>
+<td>57780</td>
+<td>57822</td>
+<td>58680</td>
+<td>58401</td>
+<td>58680</td>
+<td>58751</td>
+<td>47.344406</td>
+<td>8.572938</td>
+<td>47.319129</td>
+<td>8.580245</td>
+</tr>
+<tr>
+<th>2836095</th>
+<td>1408586</td>
+<td>919</td>
+<td>11666</td>
+<td>4</td>
+<td>BP</td>
+<td>263025</td>
+<td>166511</td>
+<td>GAAZ - BKUE</td>
+<td>2</td>
+<td>6044</td>
+<td>...</td>
+<td>57780</td>
+<td>57738</td>
+<td>58680</td>
+<td>58376</td>
+<td>58680</td>
+<td>58745</td>
+<td>47.344406</td>
+<td>8.572938</td>
+<td>47.319129</td>
+<td>8.580245</td>
+</tr>
+<tr>
+<th>2836096</th>
+<td>1408587</td>
+<td>919</td>
+<td>11666</td>
+<td>4</td>
+<td>BP</td>
+<td>263025</td>
+<td>166511</td>
+<td>GAAZ - BKUE</td>
+<td>2</td>
+<td>6044</td>
+<td>...</td>
+<td>57780</td>
+<td>57894</td>
+<td>58680</td>
+<td>58404</td>
+<td>58680</td>
+<td>58763</td>
+<td>47.344406</td>
+<td>8.572938</td>
+<td>47.319129</td>
+<td>8.580245</td>
+</tr>
+<tr>
+<th>2836097</th>
+<td>1408588</td>
+<td>919</td>
+<td>11652</td>
+<td>3</td>
+<td>BP</td>
+<td>262825</td>
+<td>166519</td>
+<td>GAAZ - WALT ab Steig ri BKUE</td>
+<td>2</td>
+<td>6044</td>
+<td>...</td>
+<td>21360</td>
+<td>21550</td>
+<td>22140</td>
+<td>22172</td>
+<td>22140</td>
+<td>22245</td>
+<td>47.344406</td>
+<td>8.572938</td>
+<td>47.336093</td>
+<td>8.617990</td>
+</tr>
+</tbody>
+</table>
+<p>2836098 rows × 54 columns</p>
+</div>
+<div class="colab-df-buttons">
+<div class="colab-df-container">
+<button class="colab-df-convert" onclick="convertToInteractive('df-55bb423c-b979-4e35-959f-1566b330859c')" style="display:none;" title="Convert this dataframe to an interactive table.">
+<svg height="24px" viewbox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
+<path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"></path>
+</svg>
+</button>
+<style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+<script>
+      const buttonEl =
+        document.querySelector('#df-55bb423c-b979-4e35-959f-1566b330859c button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-55bb423c-b979-4e35-959f-1566b330859c');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+</div>
+<div id="id_dd2210fa-b632-445b-a829-fb34accc19c2">
+<style>
+      .colab-df-generate {
+        background-color: #E8F0FE;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        fill: #1967D2;
+        height: 32px;
+        padding: 0 0 0 0;
+        width: 32px;
+      }
+
+      .colab-df-generate:hover {
+        background-color: #E2EBFA;
+        box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+        fill: #174EA6;
+      }
+
+      [theme=dark] .colab-df-generate {
+        background-color: #3B4455;
+        fill: #D2E3FC;
+      }
+
+      [theme=dark] .colab-df-generate:hover {
+        background-color: #434B5C;
+        box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+        filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+        fill: #FFFFFF;
+      }
+    </style>
+<button class="colab-df-generate" onclick="generateWithVariable('zurich_2022')" style="display:none;" title="Generate code using this dataframe.">
+<svg height="24px" viewbox="0 0 24 24" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M7,19H8.4L18.45,9,17,7.55,7,17.6ZM5,21V16.75L18.45,3.32a2,2,0,0,1,2.83,0l1.4,1.43a1.91,1.91,0,0,1,.58,1.4,1.91,1.91,0,0,1-.58,1.4L9.25,21ZM18.45,9,17,7.55Zm-12,3A5.31,5.31,0,0,0,4.9,8.1,5.31,5.31,0,0,0,1,6.5,5.31,5.31,0,0,0,4.9,4.9,5.31,5.31,0,0,0,6.5,1,5.31,5.31,0,0,0,8.1,4.9,5.31,5.31,0,0,0,12,6.5,5.46,5.46,0,0,0,6.5,12Z"></path>
+</svg>
+</button>
+<script>
+      (() => {
+      const buttonEl =
+        document.querySelector('#id_dd2210fa-b632-445b-a829-fb34accc19c2 button.colab-df-generate');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      buttonEl.onclick = () => {
+        google.colab.notebook.generateWithVariable('zurich_2022');
+      }
+      })();
+    </script>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -7855,11 +8333,11 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [66]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="c1">#Convert to HTML</span>
-<span class="n">jupyter</span> <span class="n">nbconvert</span> <span class="o">--</span><span class="n">to</span> <span class="n">html</span> <span class="o">/</span><span class="n">content</span><span class="o">/</span><span class="n">drive</span><span class="o">/</span><span class="n">MyDrive</span><span class="o">/</span><span class="n">IntroToDataSci</span><span class="o">/</span><span class="n">FinalProject</span><span class="o">/</span><span class="n">Chase</span><span class="o">-</span><span class="n">FinalProject</span><span class="o">.</span><span class="n">ipynb</span>
+<div class="highlight hl-python"><pre><span></span><span class="c1">#Datatypes for each variable in the above dataframe.</span>
+<span class="n">zurich_2022</span><span class="o">.</span><span class="n">dtypes</span>
 </pre></div>
 </div>
 </div>
@@ -7871,12 +8349,665 @@ a.anchor-link {
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-cyan-fg">  File </span><span class="ansi-green-fg">"/tmp/ipykernel_148/751432304.py"</span><span class="ansi-cyan-fg">, line </span><span class="ansi-green-fg">2</span>
-<span class="ansi-red-fg">    jupyter nbconvert --to html /content/drive/MyDrive/IntroToDataSci/FinalProject/Chase-FinalProject.ipynb</span>
-            ^
-<span class="ansi-red-fg">SyntaxError</span><span class="ansi-red-fg">:</span> invalid syntax
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>unit_id</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>line</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>vehicle_id</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>course_id</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>transit_type</th>
+<td>object</td>
+</tr>
+<tr>
+<th>circulation_num</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>route_id</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>route_desig</th>
+<td>object</td>
+</tr>
+<tr>
+<th>route_type</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>from_stopnum</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>from_stopshort</th>
+<td>object</td>
+</tr>
+<tr>
+<th>from_stopfull</th>
+<td>object</td>
+</tr>
+<tr>
+<th>after_stopnum</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>after_stopshort</th>
+<td>object</td>
+</tr>
+<tr>
+<th>after_stopfull</th>
+<td>object</td>
+</tr>
+<tr>
+<th>from_breakpoint</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>after_breakpoint</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>operating_date</th>
+<td>object</td>
+</tr>
+<tr>
+<th>from_date</th>
+<td>object</td>
+</tr>
+<tr>
+<th>after_date</th>
+<td>object</td>
+</tr>
+<tr>
+<th>direction</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>from_stop_seq</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>after_stop_seq</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>pax_per_yr</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>pax_per_day</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>pax_per_workday</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>pax_per_sa</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>pax_per_so</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>exit_per_yr</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>exit_per_day</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>exit_per_workday</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>exit_per_sa</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>exit_per_so</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>occ_per_yr</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>occ_per_day</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>occ_per_workday</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>occ_per_sa</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>occ_per_so</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>distance</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>seats</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>cap_4m2</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>measurements</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>from_sch_arr</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>from_act_arr</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>from_sch_dep</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>from_act_dep</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>after_sch_arr</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>after_act_arr</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>after_sch_dep</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>after_act_dep</th>
+<td>int64</td>
+</tr>
+<tr>
+<th>from_latitude</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>from_longitude</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>after_latitude</th>
+<td>float64</td>
+</tr>
+<tr>
+<th>after_longitude</th>
+<td>float64</td>
+</tr>
+</tbody>
+</table>
+</div><br/><label><b>dtype:</b> object</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="Exploratory-Data-Analysis">Exploratory Data Analysis<a class="anchor-link" href="#Exploratory-Data-Analysis">¶</a></h1><h2 id="Vehicle-Type-Frequency">Vehicle Type Frequency<a class="anchor-link" href="#Vehicle-Type-Frequency">¶</a></h2><p>The first seciton looks at the total number of trips on each type of transit vehicle within the system. B refers to busses (engine powered). BG, BL, BP, and BZ all refer to specific bus types. T refers to trams, TR to Trolleybusses, which are powered by overhead wires. Analyzing the usage of differnent transit types can let us identify which vehicle types cause the most issues, and therefore what can be improved.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-python"><pre><span></span><span class="c1">#This calculates the total ridership over the two weeks for each of the transit vehicle types listed in the data.</span>
+<span class="n">zurich_2022</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"transit_type"</span><span class="p">)[</span><span class="s2">"transit_type"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;Axes: xlabel='transit_type'&gt;</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedImage jp-OutputArea-output" tabindex="0">
+<img alt="No description has been provided for this image" class="" src="data:image/png;base64,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8uRwOBQQEKDRo0dr586dl1z/zJkzmjlzpiIiIuTv769BgwZpw4YNzRoYAAB0LL7eblBQUKDMzEzl5+dr9OjRys3NVVJSkvbv368+ffpctH59fb1uu+029enTR6+88or69u2rTz/9VN27d2+J+QEAQDvndYzk5ORoxowZSktLkyTl5+dr/fr1WrFihebOnXvR+itWrNDp06f1zjvv6JprrpEkORyOK5saAAB0GF7FSH19vUpKSpSVleVaZrfblZiYqOLi4ka3eeONN5SQkKCZM2fq9ddfV+/evXX33XfrwQcflI+PT6Pb1NXVqa6uznW/urramzE9csxd3yI/p6WULZ5oegQAAIzz6pqRkydPqqGhQWFhYW7Lw8LCVFFR0eg2n3zyiV555RU1NDRow4YNevjhh7V06VI99thjHp8nOztbISEhrltUVJQ3YwIAgHbkqr+bxul0qk+fPlq2bJni4uI0efJkzZs3T/n5+R63ycrKUlVVlet25MiRqz0mAAAwxKvTNKGhofLx8VFlZaXb8srKSoWHhze6TUREhK655hq3UzJDhw5VRUWF6uvr5efnd9E2/v7+8vf392Y0AADQTnl1ZMTPz09xcXEqLCx0LXM6nSosLFRCQkKj29x88806ePCgnE6na9mBAwcUERHRaIgAAIDOxevTNJmZmVq+fLleeOEF7d27V7/4xS9UW1vrenfN1KlT3S5w/cUvfqHTp09r1qxZOnDggNavX68nnnhCM2fObLlXAQAA2i2v39o7efJknThxQgsWLFBFRYVGjBihjRs3ui5qLS8vl93+deNERUVp06ZNeuCBBxQdHa2+fftq1qxZevDBB1vuVQAAgHbL6xiRpIyMDGVkZDT6WFFR0UXLEhIS9O677zbnqQAAQAfHd9MAAACjiBEAAGAUMQIAAIwiRgAAgFHECAAAMIoYAQAARhEjAADAqGZ9zggAAGh5jrnrTY/gUrZ4Yqs9F0dGAACAUcQIAAAwihgBAABGESMAAMAoYgQAABhFjAAAAKOIEQAAYBQxAgAAjCJGAACAUcQIAAAwihgBAABGESMAAMAoYgQAABhFjAAAAKOIEQAAYBQxAgAAjCJGAACAUcQIAAAwihgBAABGESMAAMAoYgQAABhFjAAAAKOIEQAAYBQxAgAAjCJGAACAUcQIAAAwihgBAABGESMAAMAoYgQAABhF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2Wz6y1/+ori4OPn7++vtt9/WoUOHdMcddygsLExBQUG64YYbtHXrVref53A49MQTT+hnP/uZunXrpn79+mnZsmWux+vr65WRkaGIiAgFBASof//+ys7Odj3+zdM01157rSQpNjZWNptNY8eOveRreeSRR/TCCy/o9ddfd72WoqIijR8/XhkZGW7rnjhxQn5+fiosLHTN/eijj2rKlCnq2rWr+vbtq7y8PLdtzpw5o/T0dPXu3VvBwcEaP368PvjgA6/2N4BmsgB0WGfOnLESEhKsGTNmWMeOHbOOHTtmbd261ZJkRUdHW5s3b7YOHjxonTp1yiotLbXy8/OtPXv2WAcOHLDmz59vBQQEWJ9++qnr5/Xv39/q2bOnlZeXZ3388cdWdna2ZbfbrX379lmWZVn/9V//ZUVFRVnbtm2zysrKrO3bt1urV692bS/Jeu211yzLsqydO3dakqytW7dax44ds06dOnXJ13L27FnrzjvvtCZMmOB6LXV1ddZLL71k9ejRwzp//rxr3ZycHMvhcFhOp9M1d7du3azs7Gxr//791u9//3vLx8fH2rx5s2ubxMREKyUlxdq1a5d14MAB61e/+pXVq1evy84F4MoRI0AHd+utt1qzZs1y3f/b3/5mSbLWrVt32W2/973vWf/93//tut+/f3/rnnvucd13Op1Wnz59rGeeecayLMu6//77rfHjx7si4Nu+GSOHDx+2JFnvv/9+k1/LtGnTrDvuuMNt2eeff2716NHDKigocC2Ljo62HnnkEbe5J0yY4Lbd5MmTreTkZMuyLGv79u1WcHCwW9BYlmUNGDDA+uMf/9jk+QA0D6dpgE4qPj7e7X5NTY3mzJmjoUOHqnv37goKCtLevXtVXl7utl50dLTrf9tsNoWHh+v48eOSLpwWKi0t1eDBg/Wf//mf2rx581V/HQEBAbr33nu1YsUKSdLu3bv10Ucfafr06W7rJSQkXHR/7969kqQPPvhANTU16tWrl4KCgly3w4cP69ChQ1f9NQCdHRewAp3UV19q+JU5c+Zoy5YtWrJkib773e8qMDBQkyZNUn19vdt611xzjdt9m80mp9MpSRo5cqQOHz6sv/zlL9q6davuvPNOJSYm6pVXXrmqryU9PV0jRozQP/7xDz3//PMaP368+vfv3+Tta2pqFBERoaKioose6969e8sNCqBRxAjQwfn5+TXp25N37Nih6dOn68c//rGkC39Bl5WVef18wcHBmjx5siZPnqxJkyZpwoQJOn36tHr27HnRXJK8+mZnT69l+PDhio+P1/Lly7V69Wr94Q9/uGidd99996L7Q4cOlXQhoioqKuTr6yuHw9HkeQC0DGIE6OAcDof+/ve/q6ysTEFBQa6jGN82cOBAvfrqq0pJSZHNZtPDDz/scV1PcnJyFBERodjYWNntdq1du1bh4eGNHl3o06ePAgMDtXHjRn3nO99RQECAQkJCLvtaNm3apP3796tXr14KCQlxHalJT09XRkaGunbt6gqqb9qxY4eefPJJpaamasuWLVq7dq3Wr18vSUpMTFRCQoJSU1P15JNPatCgQTp69KjWr1+vH//4xxed0gLQsrhmBOjg5syZIx8fHw0bNky9e/e+6BqQr+Tk5KhHjx666aablJKSoqSkJI0cOdKr5+rWrZuefPJJxcfH64YbblBZWZk2bNggu/3iXzW+vr76/e9/rz/+8Y+KjIzUHXfccdmfP2PGDA0ePFjx8fHq3bu3duzY4XpsypQp8vX11ZQpUxQQEHDRtr/61a/03nvvKTY2Vo899phycnKUlJQk6cKppg0bNuj73/++0tLSNGjQIN1111369NNPFRYW5tU+AOA9m2VZlukhAOBKlZWVacCAAdq1a9dFEeVwODR79uw280m0ANxxmgZAu/bFF1/o1KlTmj9/vm688Uavj+YAMI/TNADajG++rfbbt+3btze6zY4dOxQREaFdu3YpPz+/lScG0BI4TQOgzTh48KDHx/r27avAwMBWnAZAayFGAACAUZymAQAARhEjAADAKGIEAAAYRYwAAACjiBEAAGAUMQIAAIwiRgAAgFHECAAAMOr/A2fpubogpo3ZAAAAAElFTkSuQmCC
+"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Departure-Station-Usage">Departure Station Usage<a class="anchor-link" href="#Departure-Station-Usage">¶</a></h2><p>Identifying which stations are the most crowded allows us to pinpoint which areas of the network are causing the most stress, and therefore where resources need to be diverted. That could be in the form of timetable changes, or in infrastructure building.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-python"><pre><span></span><span class="c1">#Cound the number of total trips while grouped by stop name.</span>
+<span class="n">zurich_2022</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"from_stopfull"</span><span class="p">)[</span><span class="s2">"from_stopfull"</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>from_stopfull</th>
+</tr>
+<tr>
+<th>from_stopfull</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Zürich, Bellevue</th>
+<td>26928</td>
+</tr>
+<tr>
+<th>Zürich, Central</th>
+<td>26624</td>
+</tr>
+<tr>
+<th>Zürich, Paradeplatz</th>
+<td>25216</td>
+</tr>
+<tr>
+<th>Zürich, Escher-Wyss-Platz</th>
+<td>21656</td>
+</tr>
+<tr>
+<th>Zürich, Sternen Oerlikon</th>
+<td>21217</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+</tr>
+<tr>
+<th>Kilchberg ZH, Breitloo</th>
+<td>162</td>
+</tr>
+<tr>
+<th>Kilchberg ZH, Schlimbergstr.</th>
+<td>162</td>
+</tr>
+<tr>
+<th>Bergdietikon, Garage 2 LIBU</th>
+<td>152</td>
+</tr>
+<tr>
+<th>Schlieren, Meuchwis</th>
+<td>130</td>
+</tr>
+<tr>
+<th>Wädenswil, Garage Rütihof</th>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+<p>670 rows × 1 columns</p>
+</div><br/><label><b>dtype:</b> int64</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Traffic-by-Day">Traffic by Day<a class="anchor-link" href="#Traffic-by-Day">¶</a></h2><p>Identifying which dates and days of the week allow us to optimize staff and equipment schedules to prevent delays, while also allowing proper equipment maintinene and proper employee rest, which will also improve performance on its own.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-python"><pre><span></span><span class="c1">#Count number of trips on each operating date in the table, grouped by date.</span>
+<span class="n">zurich_2022</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"operating_date"</span><span class="p">)[</span><span class="s2">"operating_date"</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>operating_date</th>
+</tr>
+<tr>
+<th>operating_date</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>02.01.22</th>
+<td>144440</td>
+</tr>
+<tr>
+<th>03.01.22</th>
+<td>217580</td>
+</tr>
+<tr>
+<th>04.01.22</th>
+<td>218763</td>
+</tr>
+<tr>
+<th>05.01.22</th>
+<td>219444</td>
+</tr>
+<tr>
+<th>06.01.22</th>
+<td>219035</td>
+</tr>
+<tr>
+<th>07.01.22</th>
+<td>220789</td>
+</tr>
+<tr>
+<th>08.01.22</th>
+<td>187459</td>
+</tr>
+<tr>
+<th>09.01.22</th>
+<td>142134</td>
+</tr>
+<tr>
+<th>10.01.22</th>
+<td>214350</td>
+</tr>
+<tr>
+<th>11.01.22</th>
+<td>215627</td>
+</tr>
+<tr>
+<th>12.01.22</th>
+<td>215067</td>
+</tr>
+<tr>
+<th>13.01.22</th>
+<td>216489</td>
+</tr>
+<tr>
+<th>14.01.22</th>
+<td>218417</td>
+</tr>
+<tr>
+<th>15.01.22</th>
+<td>186504</td>
+</tr>
+</tbody>
+</table>
+</div><br/><label><b>dtype:</b> int64</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Lines-at-each-Station">Lines at each Station<a class="anchor-link" href="#Lines-at-each-Station">¶</a></h2><p>By observing which stations play host to transit lines, we can predict where there will be the most passenger transfers. This stops will be most important to optimze schedules for, as passenger transfers increase traffic and delays, and when those delays happen, they ripple through the network as passengers continue on their delayed journey.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [65]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-python"><pre><span></span><span class="c1">#Show unique line values grouped by stop name.</span>
+<span class="n">zurich_2022</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"from_stopfull"</span><span class="p">])[</span><span class="s2">"line"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[65]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>line</th>
+</tr>
+<tr>
+<th>from_stopfull</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Adliswil, Ahornweg</th>
+<td>[162, 185]</td>
+</tr>
+<tr>
+<th>Adliswil, Badstrasse</th>
+<td>[185]</td>
+</tr>
+<tr>
+<th>Adliswil, Bahnhof</th>
+<td>[184, 185]</td>
+</tr>
+<tr>
+<th>Adliswil, Dietlimoos</th>
+<td>[185]</td>
+</tr>
+<tr>
+<th>Adliswil, Grundstrasse</th>
+<td>[185]</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+</tr>
+<tr>
+<th>Zürich, Zwielplatz</th>
+<td>[13, 80]</td>
+</tr>
+<tr>
+<th>Zürich, Zwinglihaus</th>
+<td>[32, 66, 72]</td>
+</tr>
+<tr>
+<th>Zürich, Zypressenstrasse</th>
+<td>[2, 3, 4]</td>
+</tr>
+<tr>
+<th>Zürich, Zürichbergstrasse</th>
+<td>[5, 6]</td>
+</tr>
+<tr>
+<th>Zürich,Kalkbreite/Bhf.Wiedikon</th>
+<td>[2, 3, 4, 14, 32]</td>
+</tr>
+</tbody>
+</table>
+<p>670 rows × 1 columns</p>
+</div><br/><label><b>dtype:</b> object</label>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-python"><pre><span></span><span class="c1">#Convert to HTML</span>
+<span class="err">!</span><span class="n">jupyter</span> <span class="n">nbconvert</span> <span class="o">--</span><span class="n">to</span> <span class="n">html</span> <span class="o">/</span><span class="n">content</span><span class="o">/</span><span class="n">drive</span><span class="o">/</span><span class="n">MyDrive</span><span class="o">/</span><span class="n">IntroToDataSci</span><span class="o">/</span><span class="n">FinalProject</span><span class="o">/</span><span class="n">Chase</span><span class="o">-</span><span class="n">ZurichTransitOptimization</span><span class="o">.</span><span class="n">ipynb</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>[NbConvertApp] Converting notebook /content/drive/MyDrive/IntroToDataSci/FinalProject/Chase-FinalProject.ipynb to html
+[NbConvertApp] Writing 280555 bytes to /content/drive/MyDrive/IntroToDataSci/FinalProject/Chase-FinalProject.html
 </pre>
 </div>
 </div>
